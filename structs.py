@@ -34,6 +34,7 @@ class Task:
         self.duration = duration
         self.score = score
         self.latest_start_date = due_date - duration
+        self.actual_start_time = 0
 
     def __repr__(self) -> str:
         return f"Task({self.name}, due: {self.due_date})"

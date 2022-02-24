@@ -78,6 +78,7 @@ def find_people_to_fill_single_task(people, task):
 
     for skill, person in zip(task.required_skills, assigned_people):
         task.assignee_names.append(person.name)
+        task.actual_start_time = earliest_start_time
         person.assigned_task_names.append(task.name)
         person.busy_till = earliest_start_time + task.duration
 
@@ -103,6 +104,7 @@ def solve_tasks(people: list, tasks: list):
         else:
             tasks.append(task)
 
+    finished_tasks = sorted(finished_tasks, key = lambda task: task.actual_start_time)
     return dump_to_str(finished_tasks)
 
 
