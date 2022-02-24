@@ -14,6 +14,7 @@ class Person:
         self.skills = {}
         for skill in skills:
             self.skills[skill.name] = skill
+        self.earliest_available = 0
 
     def __str__(self) -> str:
         return self.name

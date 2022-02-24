@@ -1,8 +1,9 @@
 from collections import OrderedDict
+from typing import List
 
 from dataparser import *
 from collections import *
-from structs import Person, Task
+from structs import Skill, Person, Task
 
 
 def parse_output(out: list):
@@ -23,19 +24,36 @@ def score(inp, out):
     out = parse_output(out.split('\n'))
     people = ns.contributors
     tasks = ns.projects
-
     person_table = {person.name: person for person in people}
     task_table = {task.name: task for task in tasks}
+
     for task, people in out.items():
         task: Task = task_table[task]
         task.start_date = 0
-        people = [person_table[person] for person in people]
+        people: List[Person] = [person_table[person] for person in people]
 
-        for person in people:
-            if not hasattr(person, "earliest_available"):
-                person.earliest_available = 0
+        mentor_skills = {}
 
+        for person_idx, person in enumerate(people):
             task.start_date = max(task.start_date, person.earliest_available)
+
+            required_skill: Skill = task.required_skills[person_idx]
+            person_required_skill: Skill = person.skills.get(required_skill.name, Skill('', 0))
+
+            if person_required_skill.level < required_skill.level - 1:
+                raise RuntimeError("{}'s {} skill level too low".format(person.name, required_skill.name))
+            elif person_required_skill.level == required_skill.level - 1:
+                mentor_skills[required_skill.name] = required_skill  # need a mentor
+
+            for skill in person.skills.values():
+                if skill.name in mentor_skills:
+                    if skill.level >= mentor_skills[skill.name].level:
+                        mentor_skills.pop(skill.name)
+
+            person_required_skill.level += 1
+
+        if len(mentor_skills) > 0:
+            raise RuntimeError("Not enough mentors")
 
         task.end_date = task.start_date + task.duration  # this is one day after the last day people work on the task
 
