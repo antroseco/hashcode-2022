@@ -50,7 +50,8 @@ def score(inp, out):
                     if skill.level >= mentor_skills[skill.name].level:
                         mentor_skills.pop(skill.name)
 
-            person_required_skill.level += 1
+            person.skills.pop(required_skill.name)
+            person.skills[required_skill.name] = Skill(required_skill.name, person_required_skill.level + 1)
 
         if len(mentor_skills) > 0:
             raise RuntimeError("Not enough mentors")
