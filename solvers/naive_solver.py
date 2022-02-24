@@ -35,7 +35,7 @@ def get_viable_candidates_to_fill_role(remaining_people, required_skill, true_sk
         person_skill = person.get_skill(required_skill.name)
 
         # TODO: check for learnings here
-        if person_skill.level >= required_skill.level:
+        if person_skill.level >= true_skill.level:
             candidates.append(person)
 
     return candidates
@@ -65,6 +65,7 @@ def find_people_to_fill_single_task(people, task):
 
         assigned_people.append(candidates[0])
         remaining_people.remove(candidates[0])
+        register_person_as_mentor(mentoring_skills, candidates[0].skills)
 
     for skill, person in zip(task.required_skills, assigned_people):
         task.assignee_names.append(person.name)
