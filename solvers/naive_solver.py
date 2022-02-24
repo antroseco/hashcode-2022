@@ -71,17 +71,20 @@ def find_people_to_fill_single_task(people, task):
     return True
 
 
-def solve_tasks(people, tasks):
+def solve_tasks(people: list, tasks: list):
+    tasks: deque = deque(sort_tasks_by_start_date(tasks))
     finished_tasks = []
-    aborted_tasks = []
 
-    tasks = sort_tasks_by_start_date(tasks)
-    while len(tasks):
-        next_task = tasks.pop()
-        if find_people_to_fill_single_task(people, next_task):
-            finished_tasks.append(next_task)
+    for _ in range(100000):
+        if not tasks:
+            break
+
+        task = tasks.popleft()
+
+        if find_people_to_fill_single_task(people, task):
+            finished_tasks.append(task)
         else:
-            aborted_tasks.append(next_task)
+            tasks.append(task)
 
     return dump_to_str(finished_tasks)
 
