@@ -1,20 +1,19 @@
-class Skill:
-    def __init__(self, name: str, level: int) -> None:
-        self.name = name
-        self.level = level
-
-    def __repr__(self) -> str:
-        return f"Skill({self.name}, {self.level})"
-
+from collections import namedtuple
+Skill = namedtuple('Skill', ['name', 'level'])
 
 class Person:
     def __init__(self, name, skills: list) -> None:
-        self.assigned_tasks = []
+        self.assigned_task_names = []
         self.name = name
         self.skills = {}
         for skill in skills:
             self.skills[skill.name] = skill
         self.earliest_available = 0
+
+    def get_skill(self, skill_name)-> Skill:
+        if skill_name in self.skills:
+            return self.skills[skill_name]
+        return Skill(skill_name, 0)
 
     def __str__(self) -> str:
         return self.name
@@ -27,7 +26,7 @@ class Task:
     def __init__(self, name: str, required_skills: list, due_date: int, duration: int, score: int) -> None:
         self.name = name
         self.required_skills = required_skills
-        self.assignees = []
+        self.assignee_names = []
         self.reward = 0
 
         self.due_date = due_date

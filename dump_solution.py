@@ -10,7 +10,7 @@ nl = "\n"
 def dump_to_str(tasks: List[Task]):
     buffer = ""
 
-    tasks = [task for task in tasks if task.assignees]
+    tasks = [task for task in tasks if task.assignee_names]
 
     # Number of tasks we are execting.
     E = len(tasks)
@@ -19,7 +19,7 @@ def dump_to_str(tasks: List[Task]):
     # Assume that these are sorted in chronological order.
     for task in tasks:
         buffer += task.name + nl
-        buffer += " ".join(task.assignees) + nl
+        buffer += " ".join(task.assignee_names) + nl
 
     return buffer
 
@@ -31,8 +31,8 @@ if __name__ == "__main__":
         Task("WebChat", [], 0, 0, 0),
     ]
 
-    tasks[0].assignees = ["Bob", "Anna"]
-    tasks[1].assignees = ["Anna"]
-    tasks[2].assignees = ["Maria", "Bob"]
+    tasks[0].assignee_names = ["Bob", "Anna"]
+    tasks[1].assignee_names = ["Anna"]
+    tasks[2].assignee_names = ["Maria", "Bob"]
 
     print(dump_to_str(tasks), end="")

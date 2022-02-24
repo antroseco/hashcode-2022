@@ -29,42 +29,48 @@ def register_person_as_mentor(mentoring_skills: dict, person_skills: dict):
     return mentoring_skills
 
 
+def get_viable_candidates_to_fill_role(remaining_people, required_skill, true_skill):
+    candidates = []
+    for person in remaining_people:
+        person_skill = person.get_skill(required_skill.name)
+
+        # TODO: check for learnings here
+        if person_skill.level >= required_skill.level:
+            candidates.append(person)
+
+    return candidates
+
+def sort_candidates(candidates):
+    return candidates
+
 def find_people_to_fill_single_task(people, task):
-    remaining_people = [*people]
+    remaining_people = set(people)
     mentoring_skills = {}
     assigned_people = []
 
-    for required_skill in task.required_skills:
-        if required_skill.name in mentoring_skills:
-            mentor_skill = mentoring_skills[required_skill.name]
-            if mentor_skill.level >= required_skill.level:
-                required_skill = Skill(required_skill.name, required_skill.level - 1)
+    for true_skill in task.required_skills:
+        # Check if mentor exists
+        skill_threshold_with_mentor = Skill(true_skill.name, true_skill.level)
+        if true_skill.name in mentoring_skills:
+            mentor_skill = mentoring_skills[true_skill.name]
+            if mentor_skill.level >= true_skill.level:
+                skill_threshold_with_mentor = Skill(true_skill.name, true_skill.level - 1)
+            
+        candidates = get_viable_candidates_to_fill_role(remaining_people, skill_threshold_with_mentor, true_skill)
+        candidates = sort_candidates(candidates)
 
-        for person_index, person in enumerate(remaining_people):
-            # Budget default dict
-            person_skill = Skill(required_skill.name, 0)
-            if required_skill.name in person.skills:
-                person_skill = person.skills[required_skill.name]
-
-            # TODO: check for learnings here
-            if person_skill.level >= required_skill.level:
-                # Yay! We can use this person
-                remaining_people.pop(person_index)
-                assigned_people.append(person)
-                register_person_as_mentor(mentoring_skills, person.skills)
-                break
-        else:
-            # We failed to assign any people
+        # TODO, improve here
+        if len(candidates) == 0:
             return False
 
+        assigned_people.append(candidates[0])
+        remaining_people.remove(candidates[0])
+
     for skill, person in zip(task.required_skills, assigned_people):
-        task.assignees.append(person.name)
-        person.assigned_tasks.append(task)
+        task.assignee_names.append(person.name)
+        person.assigned_task_names.append(task.name)
 
-        person_skill_level = 0
-        if skill.name in person.skills:
-            person_skill_level = person.skills[skill.name].level
-
+        person_skill_level = person.get_skill(skill.name).level
         if skill.level >= person_skill_level:
             person.skills[skill.name] = Skill(skill.name, person_skill_level)
 
