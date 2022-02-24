@@ -42,7 +42,7 @@ def get_viable_candidates_to_fill_role(remaining_people, required_skill, true_sk
 
 
 def sort_candidates(candidates, _1, _2):
-    return candidates
+    return sorted(candidates, key=lambda c: c.busy_till)
 
 
 def find_people_to_fill_single_task(people, task):
