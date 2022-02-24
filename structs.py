@@ -14,6 +14,9 @@ class Person:
         self.skills = {}
         for skill in skills:
             self.skills[skill.name] = skill
+    
+    def __str__(self) -> str:
+        return self.name
 
     def __repr__(self) -> str:
         return f"Person({self.name})"
@@ -22,9 +25,8 @@ class Person:
 class Task:
     def __init__(self, name: str, required_skills: list, due_date: int, duration: int, score: int) -> None:
         self.name = name
-        self.required_skills = {}
-        for skill in required_skills:
-            self.required_skills[skill.name] = skill
+        self.required_skills = required_skills
+        self.assignees = []
 
         self.due_date = due_date
         self.duration = duration
