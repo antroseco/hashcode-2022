@@ -11,6 +11,9 @@ sys.path.extend(['..', '.'])
 
 
 def sort_tasks_by_start_date(tasks: list):
+    random.shuffle(tasks)
+    return tasks
+    return sorted(tasks, key=lambda task: task.score, reverse=True)
     return sorted(tasks, key=lambda task: task.latest_start_date)
 
 
@@ -93,7 +96,7 @@ def solve_tasks(people: list, tasks: list):
     tasks: deque = deque(sort_tasks_by_start_date(tasks))
     finished_tasks = []
 
-    for _ in range(10000):
+    for _ in range(5000):
         if not tasks:
             break
 
