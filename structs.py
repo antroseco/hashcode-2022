@@ -14,8 +14,8 @@ class Person:
             self.skills[skill.name] = skill
 
 class Task:
-    def __init__(self, required_skills, due_date, duration) -> None:
-        self.skills = {}
+    def __init__(self, required_skills: list, due_date: int, duration: int) -> None:
+        self.required_skills = {}
         for skill in required_skills:
             self.required_skills[skill.name] = skill
 
