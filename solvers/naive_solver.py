@@ -96,9 +96,15 @@ def solve_tasks(people: list, tasks: list):
     tasks: deque = deque(sort_tasks_by_start_date(tasks))
     finished_tasks = []
 
-    for _ in range(5000):
+    last = 0
+    for i in range(200_000):
         if not tasks:
             break
+
+        if i % 1_000 == 0:
+            if len(tasks) == last:
+                break
+            last = len(tasks)
 
         task = tasks.popleft()
 
@@ -107,7 +113,7 @@ def solve_tasks(people: list, tasks: list):
         else:
             tasks.append(task)
 
-    finished_tasks = sorted(finished_tasks, key = lambda task: task.actual_start_time)
+    finished_tasks = sorted(finished_tasks, key=lambda task: task.actual_start_time)
     return dump_to_str(finished_tasks)
 
 
