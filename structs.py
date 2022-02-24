@@ -27,6 +27,7 @@ class Task:
         self.name = name
         self.required_skills = required_skills
         self.assignees = []
+        self.reward = 0
 
         self.due_date = due_date
         self.duration = duration
