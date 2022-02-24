@@ -40,8 +40,10 @@ def get_viable_candidates_to_fill_role(remaining_people, required_skill, true_sk
 
     return candidates
 
+
 def sort_candidates(candidates):
     return candidates
+
 
 def find_people_to_fill_single_task(people, task):
     remaining_people = set(people)
@@ -55,12 +57,11 @@ def find_people_to_fill_single_task(people, task):
             mentor_skill = mentoring_skills[true_skill.name]
             if mentor_skill.level >= true_skill.level:
                 skill_threshold_with_mentor = Skill(true_skill.name, true_skill.level - 1)
-            
+
         candidates = get_viable_candidates_to_fill_role(remaining_people, skill_threshold_with_mentor, true_skill)
         candidates = sort_candidates(candidates)
 
-        # TODO, improve here
-        if len(candidates) == 0:
+        if not candidates:
             return False
 
         assigned_people.append(candidates[0])
@@ -73,7 +74,7 @@ def find_people_to_fill_single_task(people, task):
 
         person_skill_level = person.get_skill(skill.name).level
         if skill.level >= person_skill_level:
-            person.skills[skill.name] = Skill(skill.name, person_skill_level)
+            person.skills[skill.name] = Skill(skill.name, person_skill_level + 1)
 
     return True
 
