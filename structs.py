@@ -14,7 +14,7 @@ class Person:
         self.skills = {}
         for skill in skills:
             self.skills[skill.name] = skill
-    
+
     def __str__(self) -> str:
         return self.name
 

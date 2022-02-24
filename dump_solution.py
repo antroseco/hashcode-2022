@@ -1,0 +1,38 @@
+from typing import List
+
+from simplejson import dump
+
+from structs import Task
+
+nl = "\n"
+
+
+def dump_to_str(tasks: List[Task]):
+    buffer = ""
+
+    tasks = [task for task in tasks if task.assignees]
+
+    # Number of tasks we are execting.
+    E = len(tasks)
+    buffer += str(E) + nl
+
+    # Assume that these are sorted in chronological order.
+    for task in tasks:
+        buffer += task.name + nl
+        buffer += " ".join(task.assignees) + nl
+
+    return buffer
+
+
+if __name__ == "__main__":
+    tasks = [
+        Task("WebServer", [], 0, 0, 0),
+        Task("Logging", [], 0, 0, 0),
+        Task("WebChat", [], 0, 0, 0),
+    ]
+
+    tasks[0].assignees = ["Bob", "Anna"]
+    tasks[1].assignees = ["Anna"]
+    tasks[2].assignees = ["Maria", "Bob"]
+
+    print(dump_to_str(tasks), end="")

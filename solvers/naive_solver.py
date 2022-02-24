@@ -1,15 +1,17 @@
+from util import get_in_file_content
+from structs import Skill
+from dump_solution import dump_to_str
+from dataparser import parse
 import argparse
 import random
 import sys
-sys.path.extend(['..', '.'])
 from collections import *
-from dataparser import parse
-from util import get_in_file_content
-from structs import Task, Person, Skill
-from collections import defaultdict
+
+sys.path.extend(['..', '.'])
+
 
 def sort_tasks_by_start_date(tasks: list):
-    return sorted(tasks, key = lambda task: task.latest_start_date)
+    return sorted(tasks, key=lambda task: task.latest_start_date)
 
 
 def register_person_as_mentor(mentoring_skills: dict, person_skills: dict):
@@ -22,9 +24,10 @@ def register_person_as_mentor(mentoring_skills: dict, person_skills: dict):
             # Check to see if our guy is the best mentor
             if skill.level > mentoring_skills[skill_name].level:
                 mentoring_skills[skill_name] = Skill(skill.name, skill.level)
-        
+
     # Lets pretend we're functional
     return mentoring_skills
+
 
 def find_people_to_fill_single_task(people, task):
     remaining_people = [*people]
@@ -43,7 +46,7 @@ def find_people_to_fill_single_task(people, task):
             person_skill = Skill(required_skill.name, 0)
             if required_skill.name in person.skills:
                 person_skill = person.skills[required_skill.name]
-            
+
             # TODO: check for learnings here
             if person_skill.level >= required_skill.level:
                 # Yay! We can use this person
@@ -54,12 +57,11 @@ def find_people_to_fill_single_task(people, task):
 
                 if required_skill_before_mentor.level >= person_skill.level:
                     person.skills[person_skill.name] = Skill(person_skill.name, person_skill.level)
-            
+
                 break
         else:
             # We failed to assign any people
             assert(False)
-        
 
 
 def solve_tasks(people, tasks):
@@ -67,7 +69,7 @@ def solve_tasks(people, tasks):
     for task in tasks:
         find_people_to_fill_single_task(people, task)
 
-
+    return dump_to_str(tasks)
 
 
 # inp is an input file as a single string
@@ -86,9 +88,8 @@ def solve(inp, args):
     #     Person('wex', [Skill('python', 4)])
     # ]
 
-    solve_tasks(ns.people, ns.tasks)
+    return solve_tasks(ns.contributors, ns.projects)
 
-    return '0'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
