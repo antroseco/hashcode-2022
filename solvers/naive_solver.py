@@ -32,10 +32,9 @@ def register_person_as_mentor(mentoring_skills: dict, person_skills: dict):
 def find_people_to_fill_single_task(people, task):
     remaining_people = [*people]
     mentoring_skills = {}
+    assigned_people = []
 
     for required_skill in task.required_skills:
-        required_skill_before_mentor = required_skill
-
         if required_skill.name in mentoring_skills:
             mentor_skill = mentoring_skills[required_skill.name]
             if mentor_skill.level >= required_skill.level:
@@ -50,26 +49,38 @@ def find_people_to_fill_single_task(people, task):
             # TODO: check for learnings here
             if person_skill.level >= required_skill.level:
                 # Yay! We can use this person
-                register_person_as_mentor(mentoring_skills, person.skills)
-                task.assignees.append(person)
-                person.assigned_tasks.append(task)
                 remaining_people.pop(person_index)
-
-                if required_skill_before_mentor.level >= person_skill.level:
-                    person.skills[person_skill.name] = Skill(person_skill.name, person_skill.level)
-
+                assigned_people.append(person)
+                register_person_as_mentor(mentoring_skills, person.skills)
                 break
         else:
             # We failed to assign any people
-            assert(False)
+            return False
+
+    for skill, person in zip(task.required_skills, assigned_people):
+        task.assignees.append(person.name)
+        person.assigned_tasks.append(task)
+
+        person_skill_level = person.skills[skill.name].level
+        if skill.level >= person_skill_level:
+            person.skills[skill.name] = Skill(skill.name, person_skill_level)
+
+    return True
 
 
 def solve_tasks(people, tasks):
-    tasks = sort_tasks_by_start_date(tasks)
-    for task in tasks:
-        find_people_to_fill_single_task(people, task)
+    finished_tasks = []
+    aborted_tasks = []
 
-    return dump_to_str(tasks)
+    tasks = sort_tasks_by_start_date(tasks)
+    while len(tasks):
+        next_task = tasks.pop()
+        if find_people_to_fill_single_task(people, next_task):
+            finished_tasks.append(next_task)
+        else:
+            aborted_tasks.append(next_task)
+
+    return dump_to_str(finished_tasks)
 
 
 # inp is an input file as a single string
