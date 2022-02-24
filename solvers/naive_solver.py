@@ -61,7 +61,10 @@ def find_people_to_fill_single_task(people, task):
         task.assignees.append(person.name)
         person.assigned_tasks.append(task)
 
-        person_skill_level = person.skills[skill.name].level
+        person_skill_level = 0
+        if skill.name in person.skills:
+            person_skill_level = person.skills[skill.name].level
+
         if skill.level >= person_skill_level:
             person.skills[skill.name] = Skill(skill.name, person_skill_level)
 
