@@ -41,7 +41,7 @@ def get_viable_candidates_to_fill_role(remaining_people, required_skill, true_sk
     return candidates
 
 
-def sort_candidates(candidates):
+def sort_candidates(candidates, _1, _2):
     return candidates
 
 
@@ -50,6 +50,7 @@ def find_people_to_fill_single_task(people, task):
     mentoring_skills = {}
     assigned_people = []
 
+    earliest_start_time = 0
     for true_skill in task.required_skills:
         # Check if mentor exists
         skill_threshold_with_mentor = Skill(true_skill.name, true_skill.level)
@@ -59,18 +60,26 @@ def find_people_to_fill_single_task(people, task):
                 skill_threshold_with_mentor = Skill(true_skill.name, true_skill.level - 1)
 
         candidates = get_viable_candidates_to_fill_role(remaining_people, skill_threshold_with_mentor, true_skill)
-        candidates = sort_candidates(candidates)
+        candidates = sort_candidates(candidates, skill_threshold_with_mentor, true_skill)
 
         if not candidates:
             return False
 
-        assigned_people.append(candidates[0])
-        remaining_people.remove(candidates[0])
-        register_person_as_mentor(mentoring_skills, candidates[0].skills)
+        best_candidate = candidates[0]
+        earliest_start_time = max(earliest_start_time, best_candidate.busy_till)
+        assigned_people.append(best_candidate)
+        remaining_people.remove(best_candidate)
+        register_person_as_mentor(mentoring_skills, best_candidate.skills)
+
+    # Check that we don't loose points by attempting a task
+    # TODO: assign start time to task so we can sort it later
+    if earliest_start_time + task.duration > task.due_date + task.score:
+        return False
 
     for skill, person in zip(task.required_skills, assigned_people):
         task.assignee_names.append(person.name)
         person.assigned_task_names.append(task.name)
+        person.busy_till = earliest_start_time + task.duration
 
         person_skill_level = person.get_skill(skill.name).level
         if skill.level >= person_skill_level:
@@ -83,7 +92,7 @@ def solve_tasks(people: list, tasks: list):
     tasks: deque = deque(sort_tasks_by_start_date(tasks))
     finished_tasks = []
 
-    for _ in range(100000):
+    for _ in range(10000):
         if not tasks:
             break
 

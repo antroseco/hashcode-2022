@@ -9,6 +9,7 @@ class Person:
         for skill in skills:
             self.skills[skill.name] = skill
         self.earliest_available = 0
+        self.busy_till = 0
 
     def get_skill(self, skill_name)-> Skill:
         if skill_name in self.skills:
